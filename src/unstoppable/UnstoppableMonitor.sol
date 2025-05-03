@@ -33,6 +33,9 @@ contract UnstoppableMonitor is Owned, IERC3156FlashBorrower {
         return keccak256("IERC3156FlashBorrower.onFlashLoan");
     }
 
+    // q does this checks if the flashloan is functional?
+   // if the flashloan is functional, it will emit a FlashLoanStatus event with true
+    // if the flashloan is not functional, it will emit a FlashLoanStatus event with false, pause the vault, and transfer ownership to the owner 
     function checkFlashLoan(uint256 amount) external onlyOwner {
         require(amount > 0);
 

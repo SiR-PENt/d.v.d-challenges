@@ -30,8 +30,8 @@ contract UnstoppableVault is IERC3156FlashLender, ReentrancyGuard, Owned, ERC462
     error UnsupportedCurrency();
 
     event FeeRecipientUpdated(address indexed newFeeRecipient);
-
     constructor(ERC20 _token, address _owner, address _feeRecipient)
+    // deposit ERC20 token to the vault
         ERC4626(_token, "Too Damn Valuable Token", "tDVT")
         Owned(_owner)
     {
@@ -42,6 +42,7 @@ contract UnstoppableVault is IERC3156FlashLender, ReentrancyGuard, Owned, ERC462
     /**
      * @inheritdoc IERC3156FlashLender
      */
+    // q maximum amount of tokens that can be borrowed?
     function maxFlashLoan(address _token) public view nonReadReentrant returns (uint256) {
         if (address(asset) != _token) {
             return 0;
@@ -57,7 +58,8 @@ contract UnstoppableVault is IERC3156FlashLender, ReentrancyGuard, Owned, ERC462
         if (address(asset) != _token) {
             revert UnsupportedCurrency();
         }
-
+        // e if the grace end date has not passed, and the amount is less than the max flash loan, the fee is 0
+        // e otherwise, return the fee 
         if (block.timestamp < end && _amount < maxFlashLoan(_token)) {
             return 0;
         } else {
@@ -68,6 +70,7 @@ contract UnstoppableVault is IERC3156FlashLender, ReentrancyGuard, Owned, ERC462
     /**
      * @inheritdoc ERC4626
      */
+    // this is the balance of DVT tokens in this contract
     function totalAssets() public view override nonReadReentrant returns (uint256) {
         return asset.balanceOf(address(this));
     }

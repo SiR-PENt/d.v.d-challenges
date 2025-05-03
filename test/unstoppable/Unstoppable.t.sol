@@ -69,7 +69,7 @@ contract UnstoppableChallenge is Test {
         assertEq(vault.totalAssets(), TOKENS_IN_VAULT);
         assertEq(vault.totalSupply(), TOKENS_IN_VAULT);
         assertEq(vault.maxFlashLoan(address(token)), TOKENS_IN_VAULT);
-        assertEq(vault.flashFee(address(token), TOKENS_IN_VAULT - 1), 0);
+        assertEq(vault.flashFee(address(token), TOKENS_IN_VAULT - 1), 0); // verify that if the tokens borrowed is less than all the amount of tokens in vault, the fee is 0
         assertEq(vault.flashFee(address(token), TOKENS_IN_VAULT), 50000e18);
 
         // Vault is owned by monitor contract
@@ -91,7 +91,8 @@ contract UnstoppableChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_unstoppable() public checkSolvedByPlayer {
-        
+        token.approve(address(vault), INITIAL_PLAYER_TOKEN_BALANCE); // approve 10 DVT to the vault
+        token.transfer(address(vault), INITIAL_PLAYER_TOKEN_BALANCE); // transfer 10 DVT to the vault   
     }
 
     /**
