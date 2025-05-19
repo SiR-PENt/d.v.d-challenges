@@ -46,7 +46,7 @@ contract BasicForwarder is EIP712 {
         if (block.timestamp > request.deadline) revert OldRequest();
         if (nonces[request.from] != request.nonce) revert InvalidNonce();
 
-        if (IHasTrustedForwarder(request.target).trustedForwarder() != address(this)) revert InvalidTarget();
+        if (IHasTrustedForwarder(request.target).trustedForwarder() != address(this)) revert InvalidTarget(); // check if the target contract uses this forwardr?
 
         address signer = ECDSA.recover(_hashTypedData(getDataHash(request)), signature);
         if (signer != request.from) revert InvalidSigner();

@@ -62,7 +62,7 @@ contract NaiveReceiverPool is Multicall, IERC3156FlashLender {
 
         return true;
     }
-
+// so the withdraw and the deposit function are the only two places where the meta-transactions are being supportd
     function withdraw(uint256 amount, address payable receiver) external {
         // Reduce deposits
         deposits[_msgSender()] -= amount;
@@ -82,7 +82,7 @@ contract NaiveReceiverPool is Multicall, IERC3156FlashLender {
         deposits[_msgSender()] += amount;
         totalDeposits += amount;
     }
-
+// raw-thought: so since we are not checking if the caller actually called a function in the NaiveReceiver contract, an attacker can call any function with his address and the function just separates his adddress from the msg.data and send him the money? is that posible?
     function _msgSender() internal view override returns (address) {
         if (msg.sender == trustedForwarder && msg.data.length >= 20) {
             return address(bytes20(msg.data[msg.data.length - 20:]));

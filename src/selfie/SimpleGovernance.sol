@@ -21,14 +21,16 @@ contract SimpleGovernance is ISimpleGovernance {
     }
 
     function queueAction(address target, uint128 value, bytes calldata data) external returns (uint256 actionId) {
+        // checks if the caller has enough votes to propose an action
         if (!_hasEnoughVotes(msg.sender)) {
             revert NotEnoughVotes(msg.sender);
         }
 
+        // he must not be calling this contract?
         if (target == address(this)) {
             revert InvalidTarget();
         }
-
+         
         if (data.length > 0 && target.code.length == 0) {
             revert TargetMustHaveCode();
         }
@@ -97,6 +99,7 @@ contract SimpleGovernance is ISimpleGovernance {
         return actionToExecute.executedAt == 0 && timeDelta >= ACTION_DELAY_IN_SECONDS;
     }
 
+// so a voter's "vote for" must have more than half of the total supply
     function _hasEnoughVotes(address who) private view returns (bool) {
         uint256 balance = _votingToken.getVotes(who);
         uint256 halfTotalSupply = _votingToken.totalSupply() / 2;
