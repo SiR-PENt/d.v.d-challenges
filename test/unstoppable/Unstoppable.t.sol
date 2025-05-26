@@ -92,7 +92,7 @@ contract UnstoppableChallenge is Test {
      */
     function test_unstoppable() public checkSolvedByPlayer {
         token.approve(address(vault), INITIAL_PLAYER_TOKEN_BALANCE); // approve 10 DVT to the vault
-        token.transfer(address(vault), INITIAL_PLAYER_TOKEN_BALANCE); // transfer 10 DVT to the vault   
+        token.transfer(address(vault), INITIAL_PLAYER_TOKEN_BALANCE); // transfer 10 DVT to the vault
     }
 
     /**

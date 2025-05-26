@@ -30,7 +30,7 @@ contract SimpleGovernance is ISimpleGovernance {
         if (target == address(this)) {
             revert InvalidTarget();
         }
-         
+
         if (data.length > 0 && target.code.length == 0) {
             revert TargetMustHaveCode();
         }
@@ -99,7 +99,7 @@ contract SimpleGovernance is ISimpleGovernance {
         return actionToExecute.executedAt == 0 && timeDelta >= ACTION_DELAY_IN_SECONDS;
     }
 
-// so a voter's "vote for" must have more than half of the total supply
+    // so a voter's "vote for" must have more than half of the total supply
     function _hasEnoughVotes(address who) private view returns (bool) {
         uint256 balance = _votingToken.getVotes(who);
         uint256 halfTotalSupply = _votingToken.totalSupply() / 2;

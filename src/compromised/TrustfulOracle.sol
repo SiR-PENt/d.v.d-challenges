@@ -10,7 +10,7 @@ import {LibSort} from "solady/utils/LibSort.sol";
  *         The oracle's price for a given symbol is the median price of the symbol over all sources.
  */
 contract TrustfulOracle is AccessControlEnumerable {
-    uint256 public constant MIN_SOURCES = 1;
+    uint256 public constant MIN_SOURCES = 1; // this should be the min source of a price
     bytes32 public constant TRUSTED_SOURCE_ROLE = keccak256("TRUSTED_SOURCE_ROLE");
     bytes32 public constant INITIALIZER_ROLE = keccak256("INITIALIZER_ROLE");
 
@@ -22,15 +22,19 @@ contract TrustfulOracle is AccessControlEnumerable {
     event UpdatedPrice(address indexed source, string indexed symbol, uint256 oldPrice, uint256 newPrice);
 
     constructor(address[] memory sources, bool enableInitialization) {
+        // check if the sources (price oracles, i thinkk) is more than 1
         if (sources.length < MIN_SOURCES) {
             revert NotEnoughSources();
         }
+        // give each the role of trusted sources
         for (uint256 i = 0; i < sources.length;) {
             unchecked {
                 _grantRole(TRUSTED_SOURCE_ROLE, sources[i]);
                 ++i;
             }
         }
+        // this gives the deployer an initializer role if it's set to true, why?
+        // i think if he wants to be able to set the initial price
         if (enableInitialization) {
             _grantRole(INITIALIZER_ROLE, msg.sender);
         }

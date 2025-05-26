@@ -54,7 +54,8 @@ contract FreeRiderNFTMarketplace is ReentrancyGuard {
             }
         }
     }
-
+    
+    // so this function is to offer an NFT for sale
     function _offerOne(uint256 tokenId, uint256 price) private {
         DamnValuableNFT _token = token; // gas savings
 

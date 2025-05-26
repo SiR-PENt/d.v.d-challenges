@@ -7,7 +7,7 @@ import {Owned} from "solmate/auth/Owned.sol";
 import {UnstoppableVault, ERC20} from "../unstoppable/UnstoppableVault.sol";
 
 /**
- * @notice Permissioned contract for on-chain monitoring of the vault's flashloan feature.  
+ * @notice Permissioned contract for on-chain monitoring of the vault's flashloan feature.
  */
 contract UnstoppableMonitor is Owned, IERC3156FlashBorrower {
     UnstoppableVault private immutable vault;
@@ -34,8 +34,8 @@ contract UnstoppableMonitor is Owned, IERC3156FlashBorrower {
     }
 
     // q does this checks if the flashloan is functional?
-   // if the flashloan is functional, it will emit a FlashLoanStatus event with true
-    // if the flashloan is not functional, it will emit a FlashLoanStatus event with false, pause the vault, and transfer ownership to the owner 
+    // if the flashloan is functional, it will emit a FlashLoanStatus event with true
+    // if the flashloan is not functional, it will emit a FlashLoanStatus event with false, pause the vault, and transfer ownership to the owner
     function checkFlashLoan(uint256 amount) external onlyOwner {
         require(amount > 0);
 

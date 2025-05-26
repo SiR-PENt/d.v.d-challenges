@@ -9,3 +9,5 @@ They’re offering a bounty of 45 ETH for whoever is willing to take the NFTs ou
 You’ve agreed to help. Although, you only have 0.1 ETH in balance. The devs just won’t reply to your messages asking for more.
 
 If only you could get free ETH, at least for an instant.
+
+

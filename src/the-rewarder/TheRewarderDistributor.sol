@@ -49,10 +49,10 @@ contract TheRewarderDistributor {
     }
 
     function getRoot(address token, uint256 batchNumber) external view returns (bytes32) {
-        return distributions[IERC20(token)].roots[batchNumber]; // so let's say this is to get the merkle root hash? 
+        return distributions[IERC20(token)].roots[batchNumber]; // so let's say this is to get the merkle root hash?
     }
 
-// can anyone call this function?
+    // can anyone call this function?
 
     function createDistribution(IERC20 token, bytes32 newRoot, uint256 amount) external {
         if (amount == 0) revert NotEnoughTokensToDistribute();
@@ -73,14 +73,14 @@ contract TheRewarderDistributor {
     function clean(IERC20[] calldata tokens) external {
         for (uint256 i = 0; i < tokens.length; i++) {
             IERC20 token = tokens[i];
-            // if the token has zero tokens remaining, transfer the balance of tokens in this contract to the owner? how does that make sense?  
+            // if the token has zero tokens remaining, transfer the balance of tokens in this contract to the owner? how does that make sense?
             // so let's say, the contract can have more tokens that it is distributing, so the remaining change is being transferred to the owner?
             if (distributions[token].remaining == 0) {
                 token.transfer(owner, token.balanceOf(address(this)));
             }
         }
     }
-    
+
     // uint256 batchNumber = 0;
     // uint256 amount = 500;
     // uint256 tokenIndex = 1;
@@ -101,7 +101,7 @@ contract TheRewarderDistributor {
             // if token is not equal to the curent input token
             // in the first loop
             // token = address(0), which is not equal to inputTokens[inputClaim.tokenIndex], so the first check passes
-            // 
+            //
             if (token != inputTokens[inputClaim.tokenIndex]) {
                 // if the token has been asigned a value before, check if it has been claimed before or not
                 // why is it checking for the previous token? but
@@ -135,7 +135,7 @@ contract TheRewarderDistributor {
 
     function _setClaimed(IERC20 token, uint256 amount, uint256 wordPosition, uint256 newBits) private returns (bool) {
         // get the currentWord of a user's claim
-        // 
+        //
         uint256 currentWord = distributions[token].claims[msg.sender][wordPosition];
         if ((currentWord & newBits) != 0) return false; // that is, he's claimed before
 

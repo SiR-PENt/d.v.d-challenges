@@ -40,6 +40,7 @@ contract Exchange is ReentrancyGuard {
 
         id = token.safeMint(msg.sender);
         unchecked {
+            // refund the buyer if he pays more?
             payable(msg.sender).sendValue(msg.value - price);
         }
 
@@ -58,6 +59,7 @@ contract Exchange is ReentrancyGuard {
         // Price should be in [wei / NFT]
         uint256 price = oracle.getMedianPrice(token.symbol());
         if (address(this).balance < price) {
+            // i think if you want to sell back to the contract, it should check if the contract has enough money
             revert NotEnoughFunds();
         }
 

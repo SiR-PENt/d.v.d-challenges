@@ -30,8 +30,9 @@ contract UnstoppableVault is IERC3156FlashLender, ReentrancyGuard, Owned, ERC462
     error UnsupportedCurrency();
 
     event FeeRecipientUpdated(address indexed newFeeRecipient);
+
     constructor(ERC20 _token, address _owner, address _feeRecipient)
-    // deposit ERC20 token to the vault
+        // deposit ERC20 token to the vault
         ERC4626(_token, "Too Damn Valuable Token", "tDVT")
         Owned(_owner)
     {
@@ -59,7 +60,7 @@ contract UnstoppableVault is IERC3156FlashLender, ReentrancyGuard, Owned, ERC462
             revert UnsupportedCurrency();
         }
         // e if the grace end date has not passed, and the amount is less than the max flash loan, the fee is 0
-        // e otherwise, return the fee 
+        // e otherwise, return the fee
         if (block.timestamp < end && _amount < maxFlashLoan(_token)) {
             return 0;
         } else {

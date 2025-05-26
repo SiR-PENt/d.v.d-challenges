@@ -13,6 +13,7 @@ contract FlashLoanReceiver is IERC3156FlashBorrower {
     }
     // audit: so, like, this function doesnt care who calls it right?
     // so anyone can call it and it will execute the action?
+
     function onFlashLoan(address, address token, uint256 amount, uint256 fee, bytes calldata)
         external
         returns (bytes32)

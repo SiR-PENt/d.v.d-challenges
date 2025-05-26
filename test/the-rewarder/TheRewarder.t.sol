@@ -148,7 +148,6 @@ contract TheRewarderChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_theRewarder() public checkSolvedByPlayer {
-
         // Read DVT distribution JSON
         string memory dvtJson = vm.readFile("test/the-rewarder/dvt-distribution.json");
         Reward[] memory dvtRewards = abi.decode(vm.parseJson(dvtJson), (Reward[]));
@@ -158,13 +157,13 @@ contract TheRewarderChallenge is Test {
         // Load leaves
         bytes32[] memory dvtLeaves = _loadRewards("/test/the-rewarder/dvt-distribution.json");
         bytes32[] memory wethLeaves = _loadRewards("/test/the-rewarder/weth-distribution.json");
-        
+
         // Find player's reward amounts and leaves
         uint256 playerDvtAmount;
         bytes32[] memory playerDvtProof;
         uint256 playerWethAmount;
         bytes32[] memory playerWethProof;
-        for (uint i = 0; i < dvtRewards.length; i++) {
+        for (uint256 i = 0; i < dvtRewards.length; i++) {
             if (dvtRewards[i].beneficiary == player) {
                 playerDvtAmount = dvtRewards[i].amount;
                 playerWethAmount = wethRewards[i].amount;
@@ -182,9 +181,8 @@ contract TheRewarderChallenge is Test {
         tokensToClaim[1] = IERC20(address(weth));
 
         // Calculate number of claims needed based on the total distribution and player's amounts
-        uint256 totalClaimsNeeded = 
-            (TOTAL_DVT_DISTRIBUTION_AMOUNT / playerDvtAmount) +
-            (TOTAL_WETH_DISTRIBUTION_AMOUNT / playerWethAmount);
+        uint256 totalClaimsNeeded =
+            (TOTAL_DVT_DISTRIBUTION_AMOUNT / playerDvtAmount) + (TOTAL_WETH_DISTRIBUTION_AMOUNT / playerWethAmount);
         uint256 dvtClaims = TOTAL_DVT_DISTRIBUTION_AMOUNT / playerDvtAmount;
         Claim[] memory claims = new Claim[](totalClaimsNeeded);
 
@@ -200,10 +198,7 @@ contract TheRewarderChallenge is Test {
             });
         }
 
-        distributor.claimRewards({
-            inputClaims: claims,
-            inputTokens: tokensToClaim
-        });
+        distributor.claimRewards({inputClaims: claims, inputTokens: tokensToClaim});
 
         dvt.transfer(recovery, dvt.balanceOf(player));
         weth.transfer(recovery, weth.balanceOf(player));

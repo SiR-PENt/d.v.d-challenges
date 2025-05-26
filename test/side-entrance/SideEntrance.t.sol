@@ -3,7 +3,7 @@
 pragma solidity =0.8.25;
 
 import {Test, console} from "forge-std/Test.sol";
-import { SideEntranceLenderPool, IFlashLoanEtherReceiver } from "../../src/side-entrance/SideEntranceLenderPool.sol";
+import {SideEntranceLenderPool, IFlashLoanEtherReceiver} from "../../src/side-entrance/SideEntranceLenderPool.sol";
 
 contract SideEntranceChallenge is Test {
     address deployer = makeAddr("deployer");
@@ -61,7 +61,6 @@ contract SideEntranceChallenge is Test {
     }
 }
 
-
 contract DepositOverRepay is IFlashLoanEtherReceiver {
     SideEntranceLenderPool pool;
     address recovery;
@@ -93,4 +92,3 @@ contract DepositOverRepay is IFlashLoanEtherReceiver {
     // Needed to receive ETH
     receive() external payable {}
 }
-
